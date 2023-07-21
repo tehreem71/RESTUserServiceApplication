@@ -71,7 +71,16 @@ public class UserServiceController
     return userService.getUser(id);
   }
 
-
+  /**
+   * DELETE method to remove a specific user from users list based on id
+   *
+   * @param id integer path variable to remove specific user
+   */
+  @DeleteMapping("/deleteUser/{id}")
+  public void removeUser(@PathVariable int id)
+  {
+    userService.removeUser(id);
+  }
 
 
 }

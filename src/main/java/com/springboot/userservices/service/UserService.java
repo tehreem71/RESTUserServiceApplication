@@ -72,4 +72,17 @@ public @Data class UserService
     return users;
   }
 
+  /**
+   * Removes a user against given id in DELETE controller
+   *
+   * @param id id to remove user against
+   */
+  public void removeUser(int id)
+  {
+    if (!users.contains(getUser(id)))
+    {
+      throw new IndexOutOfBoundsException();
+    }
+    users.removeIf(user -> user.getId() == id);
+  }
 }

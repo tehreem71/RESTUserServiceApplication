@@ -34,6 +34,26 @@ public class UserServiceTest
     fixture.thenUserServiceThrewIllegalArgumentException();
   }
 
+  @Test
+  public void testRemoveUser_removesUser()
+  {
+    fixture.givenUserIsInitialized(1, "Eric", "Cartman", "CEO");
+    fixture.whenUserIsAdded();  //to reduce redundancy in Fixture class
+    fixture.whenUserIsDeleted();
+    fixture.thenCountOfUserIs(0);
+  }
+
+  @Test(expected = IndexOutOfBoundsException.class)
+  public void testRemoveUser_userDoesNotExist_doesNotRemoveUser_throwsException()
+  {
+    fixture.givenUserIsInitialized(1, "Eric", "Cartman", "CEO"); // User count=1
+    fixture.whenUserIsAdded();
+    fixture.givenUserIsReInitializedAfterAddition(10, "Eric", "Cartman", "CEO"); // assigning same object to a new reference
+    fixture.whenUserIsDeleted();  // will look for Ahmed in usersArray, won't find it so won't delete, count remains 1
+    fixture.thenCountOfUserIs(1);
+    fixture.thenUserServiceThrewIndexOutOfBoundException();
+  }
+
 
   private class Fixture
   {
@@ -76,7 +96,34 @@ public class UserServiceTest
       throw new IllegalArgumentException();
     }
 
-  
+    public void thenUserServiceThrewIndexOutOfBoundException()
+    {
+      assertEquals(IndexOutOfBoundsException.class, exception.getClass());
+      throw new IndexOutOfBoundsException();
+    }
+
+    public void whenUserIsDeleted()
+    {
+      try
+      {
+        this.userService.removeUser(this.mockedUser.getId());
+      }
+      catch (IndexOutOfBoundsException e)
+      {
+        this.exception = e;
+      }
+
+    }
+
+    public void givenUserIsReInitializedAfterAddition(int id, String firstName, String lastName, String employeeType)
+    {
+      mockedUser = new UserModel();
+      this.mockedUser.setId(id);
+      this.mockedUser.setFirstName(firstName);
+      this.mockedUser.setLastName(lastName);
+      this.mockedUser.setEmployeeType(employeeType);
+    }
+
   }
 
 }
