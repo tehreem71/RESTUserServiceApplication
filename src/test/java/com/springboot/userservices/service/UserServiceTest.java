@@ -6,7 +6,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import org.mockito.Mockito;
-import org.springframework.context.annotation.ComponentScan;
+
+import java.util.Objects;
 
 import static org.mockito.Mockito.when;
 
@@ -48,12 +49,30 @@ public class UserServiceTest
   {
     fixture.givenUserIsInitialized(1, "Eric", "Cartman", "CEO"); // User count=1
     fixture.whenUserIsAdded();
-    fixture.givenUserIsReInitializedAfterAddition(10, "Eric", "Cartman", "CEO"); // assigning same object to a new reference
-    fixture.whenUserIsDeleted();  // will look for Ahmed in usersArray, won't find it so won't delete, count remains 1
+    fixture.givenUserIsReInitializedAfterAddition(10, "Scully", "Cartman", "CEO"); // assigning same object to a new reference
+    fixture.whenUserIsDeleted();  // will look for Eric in usersArray, won't find it so won't delete, count remains 1
     fixture.thenCountOfUserIs(1);
     fixture.thenUserServiceThrewIndexOutOfBoundException();
   }
 
+  @Test
+  public void testUpdateUser_updatesUserSuccessfully()
+  {
+    fixture.givenUserIsInitialized(1, "Eric", "Cartman", "CEO");
+    fixture.whenUserIsAdded();
+    fixture.whenUserIsUpdated("Scully", "Cartman", "Manager");
+    fixture.thenCheckIfUserIsUpdatedSuccessfully();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testUpdateUser_enteredInvalidAttributes_doesNotUpdateUser_throwsException()
+  {
+    fixture.givenUserIsInitialized(1, "Eric", "Cartman", "CEO");
+    fixture.whenUserIsAdded();
+    fixture.whenUserIsUpdated("", "", "");
+    fixture.thenCheckIfUserIsUpdatedSuccessfully();
+    fixture.thenUserServiceThrewIllegalArgumentException();
+  }
 
   private class Fixture
   {
@@ -124,6 +143,27 @@ public class UserServiceTest
       this.mockedUser.setEmployeeType(employeeType);
     }
 
+    public void whenUserIsUpdated(String newFirstName, String newLastName, String newEmployeeType)
+    {
+      String firstName = newFirstName;
+      String lastName = newLastName;
+      String employeeType = newEmployeeType;
+      try
+      {
+        this.userService.updateUser(mockedUser.getId(), firstName, lastName, employeeType);
+      }
+      catch (IllegalArgumentException e)
+      {
+        this.exception = e;
+      }
+    }
+
+    public void thenCheckIfUserIsUpdatedSuccessfully()
+    {
+      UserModel updatedUser = userService.getUsers().get(mockedUser.getId());
+      boolean checkEqual = Objects.equals(mockedUser, updatedUser);
+      assertTrue(checkEqual);
+    }
   }
 
 }

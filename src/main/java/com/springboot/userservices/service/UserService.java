@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -84,5 +83,36 @@ public @Data class UserService
       throw new IndexOutOfBoundsException();
     }
     users.removeIf(user -> user.getId() == id);
+  }
+
+  /**
+   * Updates a user attributes from list of users, matched by given id
+   * @param id  id of user to be updated
+   * @param firstName updated first name of user
+   * @param lastName  updated last name of user
+   * @param employeeType  updated employee type of user
+   * @return  returns updated user object of UserModel class
+   */
+
+  public UserModel updateUser(int id, String firstName,String lastName, String employeeType)
+  {
+
+      if (firstName == "" || lastName == "" || employeeType == "")
+      {
+        throw new IllegalArgumentException();
+      }
+      for (UserModel user : users)
+      {
+        if (user.getId() == id)
+        {
+          user.setId(id);
+          user.setFirstName(firstName);
+          user.setLastName(lastName);
+          user.setEmployeeType(employeeType);
+          return user;
+        }
+      }
+
+    return null;
   }
 }
