@@ -8,13 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component  //declaring it as a bean
-public @Data
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor class UserModel
+@RequiredArgsConstructor
+public class UserModel
 {
   @NonNull
-  private int id;
+  private Integer id;
   @NonNull
   private String firstName;
   private String lastName;

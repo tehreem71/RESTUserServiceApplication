@@ -35,6 +35,15 @@ public class UserServiceTest
     fixture.thenUserServiceThrewIllegalArgumentException();
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testAddUser_idIsNull_doesNotAddUser_throwsException()
+  {
+    fixture.givenUserIsInitialized(0, "Eric", "Cartman", "CEO");
+    fixture.whenUserIsAdded();
+    fixture.thenCountOfUserIs(0);
+    fixture.thenUserServiceThrewIllegalArgumentException();
+  }
+
   @Test
   public void testRemoveUser_removesUser()
   {
@@ -49,7 +58,7 @@ public class UserServiceTest
   {
     fixture.givenUserIsInitialized(1, "Eric", "Cartman", "CEO"); // User count=1
     fixture.whenUserIsAdded();
-    fixture.givenUserIsReInitializedAfterAddition(10, "Scully", "Cartman", "CEO"); // assigning same object to a new reference
+    fixture.givenUserIsInitialized(10, "Scully", "Cartman", "CEO"); // assigning same object to a new reference
     fixture.whenUserIsDeleted();  // will look for Eric in usersArray, won't find it so won't delete, count remains 1
     fixture.thenCountOfUserIs(1);
     fixture.thenUserServiceThrewIndexOutOfBoundException();
@@ -77,15 +86,15 @@ public class UserServiceTest
   private class Fixture
   {
     private UserModel mockedUser = Mockito.mock(UserModel.class);
-    private UserService userService = new UserService(mockedUser);
-    private Exception exception = new Exception();
+    private UserService userService = new UserService();
+    private Exception exception;
 
     public void givenUserIsInitialized(int id, String firstName, String lastName, String employeeType)
     {
-      this.mockedUser.setId(id);
-      this.mockedUser.setFirstName(firstName);
-      this.mockedUser.setLastName(lastName);
-      this.mockedUser.setEmployeeType(employeeType);
+      mockedUser.setId(id);
+      mockedUser.setFirstName(firstName);
+      mockedUser.setLastName(lastName);
+      mockedUser.setEmployeeType(employeeType);
       if (id < 0)
       {
         when(mockedUser.getId()).thenReturn(-1);   //specifying Mocked object to put value in getId as -1
@@ -96,11 +105,11 @@ public class UserServiceTest
     {
       try
       {
-        this.userService.addUser(mockedUser);
+        userService.addUser(mockedUser);
       }
       catch (IllegalArgumentException e)
       {
-        this.exception = e;
+        exception = e;
       }
     }
 
@@ -125,44 +134,31 @@ public class UserServiceTest
     {
       try
       {
-        this.userService.removeUser(this.mockedUser.getId());
+        userService.removeUser(mockedUser.getId());
       }
       catch (IndexOutOfBoundsException e)
       {
-        this.exception = e;
+        exception = e;
       }
 
-    }
-
-    public void givenUserIsReInitializedAfterAddition(int id, String firstName, String lastName, String employeeType)
-    {
-      mockedUser = new UserModel();
-      this.mockedUser.setId(id);
-      this.mockedUser.setFirstName(firstName);
-      this.mockedUser.setLastName(lastName);
-      this.mockedUser.setEmployeeType(employeeType);
     }
 
     public void whenUserIsUpdated(String newFirstName, String newLastName, String newEmployeeType)
     {
-      String firstName = newFirstName;
-      String lastName = newLastName;
-      String employeeType = newEmployeeType;
       try
       {
-        this.userService.updateUser(mockedUser.getId(), firstName, lastName, employeeType);
+        userService.updateUser(mockedUser.getId(), newFirstName, newLastName, newEmployeeType);
       }
       catch (IllegalArgumentException e)
       {
-        this.exception = e;
+        exception = e;
       }
     }
 
     public void thenCheckIfUserIsUpdatedSuccessfully()
     {
       UserModel updatedUser = userService.getUsers().get(mockedUser.getId());
-      boolean checkEqual = Objects.equals(mockedUser, updatedUser);
-      assertTrue(checkEqual);
+      assertEquals(mockedUser, updatedUser);
     }
   }
 

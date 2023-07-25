@@ -12,21 +12,10 @@ import java.util.List;
  *
  */
 @Service
-public @Data class UserService
+@Data
+public class UserService
 {
   private List<UserModel> users = new ArrayList<>();
-  private UserModel user;
-
-  /**
-   * parameterised constructor to inject dependency of UserModel class
-   *
-   * @param user object of UserModel class
-   */
-  @Autowired
-  public UserService(UserModel user)
-  {
-    this.user = user;
-  }
 
   /**
    * Adds a new user to the list of users
@@ -35,12 +24,11 @@ public @Data class UserService
    */
   public void addUser(UserModel newUser)
   {
-    if (newUser.getId() < 0)
+    if (newUser.getId() <= 0)
     {
       throw new IllegalArgumentException();
     }
-    this.user = newUser;
-    users.add(user);
+    users.add(newUser);
   }
 
   /**
@@ -49,7 +37,7 @@ public @Data class UserService
    * @param id id to find user against
    * @return returns user if present against id, otherwise returns null
    */
-  public UserModel getUser(int id)
+  public UserModel getUser(Integer id)
   {
     for (UserModel user : users)
     {
@@ -87,31 +75,31 @@ public @Data class UserService
 
   /**
    * Updates a user attributes from list of users, matched by given id
-   * @param id  id of user to be updated
-   * @param firstName updated first name of user
-   * @param lastName  updated last name of user
-   * @param employeeType  updated employee type of user
-   * @return  returns updated user object of UserModel class
+   *
+   * @param id           id of user to be updated
+   * @param firstName    updated first name of user
+   * @param lastName     updated last name of user
+   * @param employeeType updated employee type of user
+   * @return returns updated user object of UserModel class
    */
 
-  public UserModel updateUser(int id, String firstName,String lastName, String employeeType)
+  public UserModel updateUser(Integer id, String firstName, String lastName, String employeeType)
   {
-
-      if (firstName == "" || lastName == "" || employeeType == "")
+    if (id == null)
+    {
+      throw new IllegalArgumentException();
+    }
+    for (UserModel user : users)
+    {
+      if (user.getId() == id)
       {
-        throw new IllegalArgumentException();
+        user.setId(id);
+        user.setFirstName(firstName.isEmpty() ? user.getFirstName() : firstName);
+        user.setLastName(lastName.isEmpty() ? user.getLastName() : lastName);
+        user.setEmployeeType(employeeType.isEmpty() ? user.getEmployeeType() : employeeType);
+        return user;
       }
-      for (UserModel user : users)
-      {
-        if (user.getId() == id)
-        {
-          user.setId(id);
-          user.setFirstName(firstName);
-          user.setLastName(lastName);
-          user.setEmployeeType(employeeType);
-          return user;
-        }
-      }
+    }
 
     return null;
   }

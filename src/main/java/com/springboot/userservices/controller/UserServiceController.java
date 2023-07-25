@@ -20,7 +20,6 @@ import java.util.List;
 public class UserServiceController
 {
   private UserService userService;
-  private UserModel user;
 
   /**
    * constructor to inject dependency from service and model using @Autowired
@@ -32,7 +31,6 @@ public class UserServiceController
   public UserServiceController(UserService userService, UserModel user)
   {
     this.userService = userService;
-    this.user = user;
   }
 
   /**
@@ -43,8 +41,7 @@ public class UserServiceController
   @PostMapping("/addUser")
   public void addUser(@RequestBody UserModel newClient)
   {
-    this.user = newClient;
-    userService.addUser(user);
+    userService.addUser(newClient);
   }
 
   /**
@@ -91,9 +88,8 @@ public class UserServiceController
   @PutMapping("/updateUser/{id}")
   public UserModel updateUser(@PathVariable int id, @RequestBody UserModel updatedUser)
   {
-    this.user = updatedUser;
-    userService.updateUser(id, user.getFirstName(), user.getLastName(), user.getEmployeeType());
-    return user;
+    userService.updateUser(id, updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmployeeType());
+    return updatedUser;
   }
 
 
