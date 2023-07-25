@@ -27,7 +27,8 @@ public class UserService
   {
     if (newUser.getId() <= 0)
     {
-      throw new IllegalArgumentException("Invalid user ID: " + newUser.getId());
+      logger.error("Invalid user ID: " + newUser.getId());
+      throw new IllegalArgumentException();
     }
     users.add(newUser);
     logger.info("successfully added new user");
@@ -49,7 +50,7 @@ public class UserService
         return user;
       }
     }
-    logger.error("User not found - ID: {}", id);
+    logger.debug("User not found - ID: {}", id);
     return null;
   }
 
@@ -60,7 +61,7 @@ public class UserService
    */
   public List<UserModel> getAllUsers()
   {
-    logger.info("Retrieving all users - Total users: {}", users.size());
+    logger.debug("Retrieving all users - Total users: {}", users.size());
     return users;
   }
 
@@ -73,7 +74,8 @@ public class UserService
   {
     if (!users.contains(getUser(id)))
     {
-      throw new IndexOutOfBoundsException("User with ID " + id + " does not exist!");
+      logger.error("User with ID " + id + " does not exist!");
+      throw new IndexOutOfBoundsException();
     }
     users.removeIf(user -> user.getId() == id);
     logger.info("User removed successfully - ID: {}", id);
@@ -93,7 +95,8 @@ public class UserService
   {
     if (id == null)
     {
-      throw new IndexOutOfBoundsException("User ID can not be empty!");
+      logger.error("User ID can not be empty!");
+      throw new IndexOutOfBoundsException();
     }
     for (UserModel user : users)
     {
@@ -107,7 +110,7 @@ public class UserService
         return user;
       }
     }
-    logger.info("User not found for update - ID: {}", id);
+    logger.debug("User not found for update - ID: {}", id);
     return null;
   }
 }

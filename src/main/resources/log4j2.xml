@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" name="MyApp" packages="">
+
+  <Appenders>
+    <!-- Define the appender to output logs to the console -->
+    <Console name="ConsoleAppender" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d [%t] %-5p %c{1.} - %m%n" />
+    </Console>
+
+    <!-- Define the appender to output logs to a file -->
+    <RollingFile name="FileAppender" fileName="logs/application.log"
+                 filePattern="logs/application-%d{MM-dd-yyyy}-%i.log">
+      <PatternLayout pattern="%d [%t] %-5p %c{1.} - %m%n" />
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="5" />
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <!-- Set the root logger to use both the Console and File appenders -->
+    <Root level="INFO">
+      <AppenderRef ref="ConsoleAppender" />
+      <AppenderRef ref="FileAppender" />
+    </Root>
+  </Loggers>
+
+</Configuration>
