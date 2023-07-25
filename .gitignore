@@ -12,7 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
+!**/src/main/resources/log4j2.xml
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -36,3 +36,4 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/resources/log4j2.xml

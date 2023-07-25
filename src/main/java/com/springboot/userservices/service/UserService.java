@@ -2,7 +2,8 @@ package com.springboot.userservices.service;
 
 import lombok.Data;
 import com.springboot.userservices.model.UserModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 public class UserService
 {
   private List<UserModel> users = new ArrayList<>();
-
+  private static final Logger logger= LogManager.getLogger("userService");
   /**
    * Adds a new user to the list of users
    *
@@ -26,9 +27,10 @@ public class UserService
   {
     if (newUser.getId() <= 0)
     {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Invalid user ID: " + newUser.getId());
     }
     users.add(newUser);
+    logger.info("successfully added new user");
   }
 
   /**
@@ -43,9 +45,11 @@ public class UserService
     {
       if (user.getId() == id)
       {
+        logger.info("User found - ID: {}", user.getId());
         return user;
       }
     }
+    logger.error("User not found - ID: {}", id);
     return null;
   }
 
@@ -56,6 +60,7 @@ public class UserService
    */
   public List<UserModel> getAllUsers()
   {
+    logger.info("Retrieving all users - Total users: {}", users.size());
     return users;
   }
 
@@ -68,9 +73,10 @@ public class UserService
   {
     if (!users.contains(getUser(id)))
     {
-      throw new IndexOutOfBoundsException();
+      throw new IndexOutOfBoundsException("User with ID " + id + " does not exist!");
     }
     users.removeIf(user -> user.getId() == id);
+    logger.info("User removed successfully - ID: {}", id);
   }
 
   /**
@@ -87,7 +93,7 @@ public class UserService
   {
     if (id == null)
     {
-      throw new IllegalArgumentException();
+      throw new IndexOutOfBoundsException("User ID can not be empty!");
     }
     for (UserModel user : users)
     {
@@ -97,10 +103,11 @@ public class UserService
         user.setFirstName(firstName.isEmpty() ? user.getFirstName() : firstName);
         user.setLastName(lastName.isEmpty() ? user.getLastName() : lastName);
         user.setEmployeeType(employeeType.isEmpty() ? user.getEmployeeType() : employeeType);
+        logger.info("User updated successfully - ID: {}", user.getId());
         return user;
       }
     }
-
+    logger.info("User not found for update - ID: {}", id);
     return null;
   }
 }
